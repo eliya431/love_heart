@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Building Love</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+background:#000;
+height:100vh;
+display:grid;
+place-items:center;
+overflow:hidden;
+}
+.heart{
+position:relative;
+width:min(420px,95vw);
+aspect-ratio:1;
+}
+.word{
+position:absolute;
+color:#ff1744;
+font:bold 12px Arial;
+white-space:nowrap;
+text-shadow:0 0 8px red,0 0 16px #ff1744;
+opacity:0;
+animation:appear .5s forwards,glow 1.5s infinite alternate;
+}
+@keyframes appear{to{opacity:1}}
+@keyframes glow{
+to{text-shadow:0 0 15px red,0 0 25px #ff1744}
+}
+.center{
+position:absolute;
+top:50%;left:50%;
+transform:translate(-50%,-50%);
+color:#ff1744;
+font:bold 22px Arial;
+text-shadow:0 0 15px red;
+opacity:0;
+transition:opacity 1s;
+}
+</style>
+</head>
+<body>
+<div class="heart" id="heart">
+<div class="center" id="center">I LOVE YOU ❤️</div>
+</div>
+<script>
+const heart=document.getElementById("heart");
+const center=document.getElementById("center");
+let points=[];
+
+for(let layer=0;layer<4;layer++){
+for(let i=0;i<100;i++){
+let t=i/100*Math.PI*2;
+let x=16*Math.sin(t)**3;
+let y=13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t);
+let tx=48*Math.cos(t)*Math.sin(t)**2;
+let ty=-13*Math.sin(t)+10*Math.sin(2*t)+6*Math.sin(3*t)+4*Math.sin(4*t);
+let angle=Math.atan2(-ty,tx);
+let len=Math.hypot(tx,ty);
+let offset=(layer-1.5)*9;
+let nx=len?ty/len:0;
+let ny=len?tx/len:0;
+points.push({x,y,angle,offset,nx,ny});
+}
+}
+
+points.sort(()=>Math.random()-.5);
+
+points.forEach((p,i)=>{
+let word=document.createElement("span");
+word.className="word";
+word.textContent="I love you";
+word.style.left=`calc(50% + ${p.x*10+p.nx*p.offset}px)`;
+word.style.top=`calc(50% - ${p.y*10+p.ny*p.offset}px)`;
+word.style.transform=`translate(-50%,-50%) rotate(${p.angle}rad)`;
+word.style.animationDelay=`${i*.025}s,${i*.025}s`;
+heart.appendChild(word);
+});
+
+setTimeout(()=>center.style.opacity=1,3000);
+</script>
+</body>
+</html>
